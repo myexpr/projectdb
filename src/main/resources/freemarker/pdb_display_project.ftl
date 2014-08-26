@@ -16,7 +16,9 @@
     <br/>
 
     <h2>Solution Description</h2>
+    <#if project.solutionDescription??>
     ${project.solutionDescription!""}
+    </#if>
     <br/>
 
     <h2>PIDs</h2>
@@ -60,6 +62,4 @@
 
 </body>
 </html>
-
-${project.solutionDescription}
 
