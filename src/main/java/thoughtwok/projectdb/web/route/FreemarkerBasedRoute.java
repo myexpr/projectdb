@@ -1,4 +1,4 @@
-package thoughtwok.projectdb.web;
+package thoughtwok.projectdb.web.route;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -48,6 +48,17 @@ public abstract class FreemarkerBasedRoute extends Route {
     
     protected Template getTemplate() {
         return this.template;
+    }
+    
+    protected Template getTemplate(String templatePath) {
+        Template template = null;
+        try {
+            template = FreemarkerBasedRoute.configuration.getTemplate(templatePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return template;
     }
 
 }

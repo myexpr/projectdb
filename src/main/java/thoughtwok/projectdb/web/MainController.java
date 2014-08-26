@@ -1,15 +1,13 @@
 package thoughtwok.projectdb.web;
 
+import static spark.Spark.staticFileLocation;
+
 import java.io.IOException;
 import java.io.Writer;
 
 import spark.Request;
 import spark.Response;
-import spark.Route;
-import static spark.Spark.staticFileLocation;
-import thoughtwok.projectdb.entity.MetaStatistics;
-import thoughtwok.projectdb.service.StatisticsService;
-import freemarker.template.SimpleHash;
+import thoughtwok.projectdb.web.route.FreemarkerBasedRoute;
 import freemarker.template.TemplateException;
 
 public class MainController {
@@ -26,39 +24,20 @@ public class MainController {
 
     protected void initRoutes() throws IOException {
 
-        spark.Spark.get(new FreemarkerBasedRoute("/", "project_stats.ftl") {
+        spark.Spark.get(new ProjectHomeRoute("/", "pdb_project_home.ftl"));
+        spark.Spark.get(new CreateProjectRoute("/create", "pdb_create_project.ftl"));
+        spark.Spark.post(new SaveProjectRoute("/save", "pdb_create_project.ftl"));
+        
+        spark.Spark.get(new FreemarkerBasedRoute("/project/:id", "pdb_display_project.ftl") {
 
             @Override
             protected void doHandle(Request request, Response response, Writer writer) throws IOException,
                     TemplateException {
-                StatisticsService ssService = new StatisticsService();
-                MetaStatistics statistics = ssService.getStatistics();
 
-                SimpleHash hash = new SimpleHash();
-                hash.put("activeProjectCount", statistics.getActiveProjectCount());
-                hash.put("tagFrequency", statistics.getTagStatistics().getTagFrequency().entrySet());
-
-                this.getTemplate().process(hash, writer);
-            }
-        });
-
-
-        spark.Spark.get(new FreemarkerBasedRoute("/jqdemo", "jq.ftl") {
-
-            @Override
-            protected void doHandle(Request request, Response response, Writer writer) throws IOException,
-                    TemplateException {
-                StatisticsService ssService = new StatisticsService();
-                MetaStatistics statistics = ssService.getStatistics();
-
-                SimpleHash hash = new SimpleHash();
-                hash.put("activeProjectCount", statistics.getActiveProjectCount());
-                hash.put("tagFrequency", statistics.getTagStatistics().getTagFrequency().entrySet());
-
-                this.getTemplate().process(hash, writer);
             }
         });
     }
+
 
     public static void main(String[] args) {
         new MainController();

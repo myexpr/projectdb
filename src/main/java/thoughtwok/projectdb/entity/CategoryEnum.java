@@ -2,7 +2,6 @@ package thoughtwok.projectdb.entity;
 
 public enum CategoryEnum {
     
-    PROJECT_NAME,
     METHODOLOGY,
     COLLABORATION,
 
@@ -19,6 +18,8 @@ public enum CategoryEnum {
 
     HARDWARE,
     MONITORING,
-    TRAFFIC_MANAGERS
+    TRAFFIC_MANAGERS,
+    
+    OTHERS
 
 }
