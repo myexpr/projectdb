@@ -5,13 +5,20 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.springframework.stereotype.Controller;
+
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import spark.Request;
 import spark.Response;
 
+@Controller
 public class CreateProjectRoute extends FreemarkerBasedRoute {
 
+    public CreateProjectRoute() throws IOException {
+        super("/create", "pdb_create_project.ftl");
+    }
+    
     public CreateProjectRoute(String path, String templateName) throws IOException {
         super(path, templateName);
     }

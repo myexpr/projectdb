@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import spark.Request;
@@ -20,8 +23,16 @@ import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
 import thoughtwok.projectdb.entity.Tag;
 
+@Controller
 public class SaveProjectRoute extends FreemarkerBasedRoute {
 
+    @Autowired
+    ProjectDao projectDao;
+    
+    public SaveProjectRoute() throws IOException {
+        super("/save", "pdb_create_project.ftl");
+    }
+    
     public SaveProjectRoute(String path, String templateName) throws IOException {
         super(path, templateName);
     }
@@ -29,13 +40,12 @@ public class SaveProjectRoute extends FreemarkerBasedRoute {
     @Override
     protected void doHandle(Request request, Response response, Writer writer) throws IOException, TemplateException {
 
-        ProjectDao projectDao = null;
+
         Project theProject = null;
         String commonName = null;
         SimpleHash root = null;
         Set<String> errors = null;
 
-        projectDao = new ProjectDao();
         commonName = request.queryParams(ProjectCollectionEnum.COMMON_NAME.name());
         root = new SimpleHash();
         errors = new HashSet<>();

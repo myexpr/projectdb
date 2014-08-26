@@ -1,18 +1,24 @@
 package thoughtwok.projectdb.dao;
 
-import thoughtwok.projectdb.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import thoughtwok.projectdb.entity.TagStatistics;
-import thoughtwok.projectdb.service.DBService;
+import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
+@Component
 public class TagDao {
+    
+    @Autowired
+    DbService dbService;
 
     public TagStatistics getTagStatistics() {
-        DBCollection collection = DBService.getInstance().getCollection("projectdata");
+        DBCollection collection = this.dbService.getCollection("projectdata");
 
         // aggregation pipeline
         DBObject match = new BasicDBObject("$match", new BasicDBObject("LATEST", Boolean.TRUE));

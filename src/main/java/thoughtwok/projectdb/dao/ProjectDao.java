@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
 import thoughtwok.projectdb.entity.Tag;
-import thoughtwok.projectdb.service.DBService;
+import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -16,7 +18,11 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.QueryBuilder;
 
+@Repository
 public class ProjectDao {
+
+    @Autowired
+    DbService dbService;
 
     /**
      * Persists a {@code Project}.
@@ -50,7 +56,7 @@ public class ProjectDao {
         }
         this.appendToDbObject(dbObject, ProjectCollectionEnum.TAG_DATA.name(), dbTags);
 
-        DBCollection collection = DBService.getInstance().getCollection("projectdata");
+        DBCollection collection = this.dbService.getCollection("projectdata");
         collection.insert(dbObject);
 
         ObjectId id = (ObjectId) dbObject.get(ProjectCollectionEnum._ID.name().toLowerCase());
@@ -73,14 +79,14 @@ public class ProjectDao {
         id = new ObjectId(queryProject.getId());
 
         DBObject query = QueryBuilder.start(ProjectCollectionEnum._ID.name().toLowerCase()).is(id).get();
-        DBCollection collection = DBService.getInstance().getCollection("projectdata");
+        DBCollection collection = this.dbService.getCollection("projectdata");
 
         DBObject updatedDocument = collection.findAndModify(query, null, null, false, update, true, false);
-        
-        if (updatedDocument != null ) {
+
+        if (updatedDocument != null) {
             queryProject.setLatest((boolean) updatedDocument.get(ProjectCollectionEnum.LATEST.name()));
         }
-        
+
         return queryProject;
     }
 
@@ -101,7 +107,7 @@ public class ProjectDao {
         id = new ObjectId(queryProject.getId());
 
         DBObject query = QueryBuilder.start(ProjectCollectionEnum._ID.name().toLowerCase()).is(id).get();
-        DBCollection collection = DBService.getInstance().getCollection("projectdata");
+        DBCollection collection = this.dbService.getCollection("projectdata");
         DBCursor cursor = collection.find(query);
 
         if (cursor.hasNext()) {
@@ -111,14 +117,14 @@ public class ProjectDao {
 
         return result;
     }
-    
+
     public Long countActiveProjects() {
-        
-        DBCollection collection = DBService.getInstance().getCollection("projectdata");
+
+        DBCollection collection = this.dbService.getCollection("projectdata");
         DBObject query = QueryBuilder.start(ProjectCollectionEnum.LATEST.name()).is(Boolean.TRUE).get();
-        
+
         long countOfActionProjects = collection.count(query);
-        
+
         return new Long(countOfActionProjects);
     }
 
@@ -211,5 +217,6 @@ public class ProjectDao {
 
         return tags;
     }
+
 
 }

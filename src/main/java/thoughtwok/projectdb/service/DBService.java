@@ -2,22 +2,19 @@ package thoughtwok.projectdb.service;
 
 import java.net.UnknownHostException;
 
+import org.springframework.stereotype.Component;
+
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
-public class DBService {
-    
-    private static final DBService INSTANCE = new DBService();
-    
-    public static DBService getInstance() {
-        return INSTANCE;
-    }
-    
+@Component
+public class DbService {
+
     private DB mongoDb;
 
-    public DBService() {
+    public DbService() {
         if (this.mongoDb == null) {
             try {
                 this.mongoDb = new MongoClient(new MongoClientURI("mongodb://localhost/")).getDB("projrepo");
@@ -26,9 +23,8 @@ public class DBService {
             }
         }
     }
-    
+
     public DBCollection getCollection(String collectionName) {
         return this.mongoDb.getCollection(collectionName);
-        
     }
 }
