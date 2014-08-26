@@ -1,4 +1,4 @@
-package thoughtwok.projectdb.web;
+package thoughtwok.projectdb.web.route;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -19,7 +19,6 @@ import thoughtwok.projectdb.dao.ProjectDao;
 import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
 import thoughtwok.projectdb.entity.Tag;
-import thoughtwok.projectdb.web.route.FreemarkerBasedRoute;
 
 public class SaveProjectRoute extends FreemarkerBasedRoute {
 

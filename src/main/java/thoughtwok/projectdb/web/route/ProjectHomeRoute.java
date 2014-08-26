@@ -1,4 +1,4 @@
-package thoughtwok.projectdb.web;
+package thoughtwok.projectdb.web.route;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -9,7 +9,6 @@ import spark.Request;
 import spark.Response;
 import thoughtwok.projectdb.entity.MetaStatistics;
 import thoughtwok.projectdb.service.StatisticsService;
-import thoughtwok.projectdb.web.route.FreemarkerBasedRoute;
 
 public class ProjectHomeRoute extends FreemarkerBasedRoute {
 

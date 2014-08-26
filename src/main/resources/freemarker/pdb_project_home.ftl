@@ -31,6 +31,8 @@
       }
     </style>
   </head>
+<a href="/">Project Home</a>     <a href="/create">Create a Project</a>
+<p>
   <body>
     <h2>Tracking ${activeProjectCount} Projects</h2>
     <div id="wordcloud"></div>

@@ -1,4 +1,4 @@
-package thoughtwok.projectdb.web;
+package thoughtwok.projectdb.web.route;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -9,7 +9,6 @@ import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import spark.Request;
 import spark.Response;
-import thoughtwok.projectdb.web.route.FreemarkerBasedRoute;
 
 public class CreateProjectRoute extends FreemarkerBasedRoute {
 

@@ -9,6 +9,9 @@
     <p>
 </#if>
 
+<a href="/">Project Home</a>     <a href="/">Create a Project</a>
+<p>
+
 <form action="/save" method="POST">
     <#list errors as error>
     ${error}</br>
