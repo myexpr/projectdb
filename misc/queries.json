@@ -1,0 +1,38 @@
+-- tag stats
+db.projectdata.aggregate([
+    { $match  : { 'LATEST' : true } },
+    { $unwind : '$TAG_DATA' },
+    { $group  : { '_id' : '$TAG_DATA.TAG', 'tagCount' : {$sum:1} } },
+    { $sort   : {'tagCount' : -1 } }
+])
+
+-- number of active project
+db.projectdata.count ( { 'LATEST' : true } )
+
+
+-- average number of tags per project
+db.projectdata.aggregate([
+    { $match  : { 'LATEST' : true } },
+    { $unwind : '$TAG_DATA' },
+    { $group  : { '_id' : null, tagCount : {$avg: {$sum:1}}}}
+])
+
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : 'PRODUCT', 'TAG' : 'solr'} } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : 'PRODUCT', 'TAG' : {$in: ['solr', 'endeca']} } } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['solr', 'endeca']} } } } )
+
+db.projectdata.aggregate([
+    { $match  : { 'LATEST' : true, 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['solr', 'endeca']} } } } },
+    { $unwind : '$TAG_DATA' },
+    { $group  : { '_id' : '$TAG_DATA.TAG', 'tagCount' : {$sum:1} } },
+    { $sort   : {'tagCount' : -1 } }
+])
+
+-- search with multiple tags
+db.projectdata.aggregate([
+    { $match  : { 'LATEST' : true, 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['jmeter']} } } } },
+    { $unwind : '$TAG_DATA' },
+    { $group  : { '_id' : '$TAG_DATA.TAG', 'tagCount' : {$sum:1} } },
+    { $sort   : {'tagCount' : -1 } }
+])
+
