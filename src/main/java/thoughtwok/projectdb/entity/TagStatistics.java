@@ -5,14 +5,21 @@ import java.util.Map;
 
 public class TagStatistics {
     
-    private Map<Tag, Integer> tagFrequency = new HashMap<>();
+    private Map<String, Integer> tagFrequency = new HashMap<>();
     
-    public void add(Tag tag, Integer count) {
+    public void add(String tag, Integer count) {
         this.tagFrequency.put(tag, count);
     }
 
-    public Map<Tag, Integer> getTagFrequency() {
+    public Map<String, Integer> getTagFrequency() {
         return tagFrequency;
     }
+
+    @Override
+    public String toString() {
+        return "TagStatistics [tagFrequency=" + tagFrequency + "]";
+    }
+    
+    
 
 }

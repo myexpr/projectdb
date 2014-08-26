@@ -1,4 +1,4 @@
-package thoughtwok.projectdb.dao;
+package thoughtwok.projectdb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import thoughtwok.projectdb.dao.ProjectCollectionEnum;
+import thoughtwok.projectdb.dao.TagCollectionEnum;
 import thoughtwok.projectdb.entity.CategoryEnum;
 
 import com.mongodb.BasicDBObject;

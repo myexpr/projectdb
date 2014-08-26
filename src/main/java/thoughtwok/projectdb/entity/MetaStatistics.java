@@ -22,4 +22,11 @@ public class MetaStatistics {
         this.tagStatistics = tagStatistics;
     }
 
+    @Override
+    public String toString() {
+        return "MetaStatistics [activeProjectCount=" + activeProjectCount + ", tagStatistics=" + tagStatistics + "]";
+    }
+    
+    
+
 }

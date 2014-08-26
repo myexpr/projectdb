@@ -27,9 +27,7 @@ public class TagDao {
         // iterate over results and populate tag statistics
         TagStatistics tagStatistics = new TagStatistics();
         for (DBObject o : aggregate.results()) {
-            Tag tag = new Tag((String) o.get("_id"));
-            Integer count = (Integer) o.get("tagCount");
-            tagStatistics.add(tag, count);
+            tagStatistics.add((String) o.get("_id"), (Integer) o.get("tagCount"));
         }
 
         return tagStatistics;
