@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import thoughtwok.projectdb.service.DbService;
 
@@ -17,13 +17,13 @@ import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import static junit.framework.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TagDaoTest {
 
     @Mock
@@ -38,11 +38,7 @@ public class TagDaoTest {
     @InjectMocks
     TagDao tagDao;
 
-    @Before
-    public void initMocks() {
-        MockitoAnnotations.initMocks(this);
-    }
-
+    @Test
     public void shouldReturnStatisticsAcrossAllProjectsWhenNoInputSpecified() {
         String[] input = null;
 
@@ -78,6 +74,7 @@ public class TagDaoTest {
 
     }
 
+    @Test
     public void shouldReturnStatisticsAcrossAllProjectsWhenInputSpecified() {
         String[] input = new String[] {"foo", "bar"};
 

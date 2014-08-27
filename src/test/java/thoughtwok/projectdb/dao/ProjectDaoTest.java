@@ -7,11 +7,12 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
@@ -34,6 +35,7 @@ import static junit.framework.Assert.*;
  * A test case to validate interactions with db layer. The actual validation of persisting and retrieving will happen in
  * other test suite which doesnt rely on mocks so extensively since it is a pain to mock so much
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ProjectDaoTest {
 
     @Mock
@@ -50,7 +52,6 @@ public class ProjectDaoTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         when(dbService.getCollection("projectdata")).thenReturn(dbCollection);
     }
 
