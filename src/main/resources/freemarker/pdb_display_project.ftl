@@ -2,9 +2,19 @@
 <html>
 <head>
     <title>Display Project Details</title>
+	<link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
-<a href="/">Project Home</a>     <a href="/create">Create a Project</a>
+<div id="header" class="clearfix">
+	<div class="menu">
+		<a href="/">Project Home</a> <a href="/create">Create a Project</a>
+	</div>
+	<div class="user-options">
+		<#if username??>
+			Welcome ${username} <a href="/logout">Logout</a> | <a href="/">Blog Home</a>
+		</#if>
+	</div>
+</div>
 <p>
 
     <h2>Common Names (*)</h2>

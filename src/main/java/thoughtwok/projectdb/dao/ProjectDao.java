@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.test.AssertThrows;
 import org.springframework.util.Assert;
 
 import thoughtwok.projectdb.entity.CategoryEnum;
@@ -15,7 +16,6 @@ import thoughtwok.projectdb.entity.Tag;
 import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -26,10 +26,12 @@ public class ProjectDao {
 
     public static final String ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH = "atleast one tag should have been specified";
     public static final String ERROR_COMMONNAME = "a project to be persisted should have atleast one common name";
-    public  static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
-    public  static final String ERROR_PERSISTED_ID = "after persisting project's id should never be null";
+    public static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
+    public static final String ERROR_PERSISTED_ID = "after persisting project's id should never be null";
     public static final String ERROR_LATEST = "while creating projects latest flag should be set to true";
-    
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ProjectDao.class);
+
     @Autowired
     DbService dbService;
 
@@ -43,15 +45,18 @@ public class ProjectDao {
 
         BasicDBObject dbObject = new BasicDBObject();
 
-        //validate a few basic stuffs 
-        Assert.notNull(project.getCommonNames(), ERROR_COMMONNAME); Assert.notEmpty(project.getCommonNames(), ERROR_COMMONNAME);
-        Assert.notNull(project.getTags(), ERROR_TAGS); Assert.notEmpty(project.getTags(), ERROR_TAGS);
-        Assert.isTrue(project.isLatest(), ERROR_LATEST); 
-        
+        // validate a few basic stuffs
+        Assert.notNull(project.getCommonNames(), ERROR_COMMONNAME);
+        Assert.notEmpty(project.getCommonNames(), ERROR_COMMONNAME);
+        Assert.notNull(project.getTags(), ERROR_TAGS);
+        Assert.notEmpty(project.getTags(), ERROR_TAGS);
+        Assert.isTrue(project.isLatest(), ERROR_LATEST);
+
         // add common names
         this.appendToDbObject(dbObject, ProjectCollectionEnum.COMMON_NAME.name(), project.getCommonNames());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.LATEST.name(), project.isLatest());
-        this.appendToDbObject(dbObject, ProjectCollectionEnum.SOLUTION_DESCRIPTION.name(), project.getSolutionDescription());
+        this.appendToDbObject(dbObject, ProjectCollectionEnum.SOLUTION_DESCRIPTION.name(),
+                project.getSolutionDescription());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.PIDS.name(), project.getPids());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.CLIENTS.name(), project.getClients());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.INDUSTRIES.name(), project.getIndustries());
@@ -73,7 +78,7 @@ public class ProjectDao {
         collection.insert(dbObject);
 
         ObjectId id = (ObjectId) dbObject.get(ProjectCollectionEnum._ID.name().toLowerCase());
-        Assert.notNull(id, ERROR_PERSISTED_ID); 
+        Assert.notNull(id, ERROR_PERSISTED_ID);
 
         project.setId(id.toString());
 
@@ -111,9 +116,9 @@ public class ProjectDao {
         ObjectId id = null;
         Project result = null;
 
-        //validate inputs
+        // validate inputs
         Assert.notNull(queryProject.getId(), "id cant be null while fetching a project");
-        
+
         id = new ObjectId(queryProject.getId());
 
         DBObject query = QueryBuilder.start(ProjectCollectionEnum._ID.name().toLowerCase()).is(id).get();
@@ -227,25 +232,27 @@ public class ProjectDao {
 
         return tags;
     }
-    
+
     public List<Project> fetchProjectsByTags(String[] tags) {
-        Assert.isTrue(tags!=null && tags.length>0, ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH);
-        
-        DBObject query = new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
+        Assert.isTrue(tags != null && tags.length > 0, ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH);
+
+        DBObject query =
+                new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
+        LOGGER.info("The project query object with tags is {}",query);
         DBCollection collection = dbService.getCollection("projectdata");
         DBCursor cursor = collection.find(query);
-        
-        //iterate, hydrate, add to list 
+
+        // iterate, hydrate, add to list
         List<Project> projects = new ArrayList<>();
-        
+
         while (cursor.hasNext()) {
             DBObject root = cursor.next();
             Project project = this.buildProjectFromDbObject(root);
             projects.add(project);
         }
-        
+
         return projects;
     }
- 
+
 
 }

@@ -37,7 +37,7 @@ public class TagDaoIntegrationTest {
 
     @Test
     public void testSubStatisticsWithOneTag() {
-        TagStatistics stats = tagDao.getTagStatisticsFor(new String[] {"Drools"});
+        TagStatistics stats = tagDao.getTagStatisticsFor(new String[] {"putty", "sharepoint"});
         System.out.println(stats.getTagFrequency().entrySet().size());
         for (Entry<String, Integer> e : stats.getTagFrequency().entrySet()) {
             System.out.println(e.getKey() + "<>" + e.getValue());

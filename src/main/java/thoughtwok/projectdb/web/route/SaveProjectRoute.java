@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import freemarker.template.SimpleHash;
-import freemarker.template.TemplateException;
 import spark.Request;
 import spark.Response;
 import thoughtwok.projectdb.dao.ProjectCollectionEnum;
@@ -22,12 +22,16 @@ import thoughtwok.projectdb.dao.ProjectDao;
 import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
 import thoughtwok.projectdb.entity.Tag;
+import freemarker.template.SimpleHash;
+import freemarker.template.TemplateException;
 
 @Controller
 public class SaveProjectRoute extends FreemarkerBasedRoute {
 
     @Autowired
     ProjectDao projectDao;
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(SaveProjectRoute.class);
     
     public SaveProjectRoute() throws IOException {
         super("/save", "pdb_create_project.ftl");
@@ -89,16 +93,17 @@ public class SaveProjectRoute extends FreemarkerBasedRoute {
 
             root.put("projectParams", queryMap);
             root.put("errors", errors);
-            this.getTemplate("pdb_create_project.ftl").process(root, writer);
+            this.getTemplate().process(root, writer);
             return;
         }
 
         // invoke product service and create the product
         theProject = projectDao.createProject(theProject);
-        System.out.println("persisted with id " + theProject.getId());
+        LOGGER.debug("persisted project with id {}", theProject.getId());
 
         // now display the product
-        // response.redirect("/project/" + theProject.getId());
+        root.put("project", theProject);
+        this.getTemplate("pdb_display_project.ftl").process(root, writer);
     }
 
     protected List<String> asList(Request request, String paramName) {

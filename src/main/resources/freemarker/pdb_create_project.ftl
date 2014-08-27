@@ -2,13 +2,12 @@
 <html>
 <head>
 	<title>Create a new Project</title>
-	<link rel="stylesheet" type="text/css" href="styles.css">
+	<link rel="stylesheet" type="text/css" href="/styles.css">
 </head>
 <body>
 <div id="header" class="clearfix">
 	<div class="menu">
-		<a href="/">Project Home</a>
-		<a href="/">Create a Project</a>
+		<a href="/">Project Home</a> <a href="/create">Create a Project</a>
 	</div>
 	<div class="user-options">
 		<#if username??>

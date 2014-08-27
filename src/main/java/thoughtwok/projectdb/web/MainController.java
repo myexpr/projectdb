@@ -17,6 +17,7 @@ import spark.Route;
 import thoughtwok.projectdb.web.route.CreateProjectRoute;
 import thoughtwok.projectdb.web.route.ProjectHomeRoute;
 import thoughtwok.projectdb.web.route.SaveProjectRoute;
+import thoughtwok.projectdb.web.route.TagSearchRoute;
 import thoughtwok.projectdb.web.route.ViewProjectRoute;
 
 @Controller
@@ -35,6 +36,9 @@ public class MainController {
     
     @Autowired
     ViewProjectRoute viewProjectRoute;
+
+    @Autowired
+    TagSearchRoute tagSearchRoute;
 
     public void initialize() {
         try {
@@ -59,6 +63,7 @@ public class MainController {
         spark.Spark.get(this.createProjectRoute);
         spark.Spark.post(this.saveProjectRoute);
         spark.Spark.get(this.viewProjectRoute);
+        spark.Spark.get(this.tagSearchRoute);
     }
 
 
