@@ -22,9 +22,10 @@ import com.mongodb.QueryBuilder;
 @Repository
 public class ProjectDao {
 
-    private static final String ERROR_COMMONNAME = "a project to be persisted should have atleast one common name";
-    private static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
-    private static final String ERROR_PERSISTED_ID = "a persisted object's id should never be null";
+    public static final String ERROR_COMMONNAME = "a project to be persisted should have atleast one common name";
+    public  static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
+    public  static final String ERROR_PERSISTED_ID = "after persisting project's id should never be null";
+    public static final String ERROR_LATEST = "while creating projects latest flag should be set to true";
     
     @Autowired
     DbService dbService;
@@ -42,6 +43,7 @@ public class ProjectDao {
         //validate a few basic stuffs 
         Assert.notNull(project.getCommonNames(), ERROR_COMMONNAME); Assert.notEmpty(project.getCommonNames(), ERROR_COMMONNAME);
         Assert.notNull(project.getTags(), ERROR_TAGS); Assert.notEmpty(project.getTags(), ERROR_TAGS);
+        Assert.isTrue(project.isLatest(), ERROR_LATEST); 
         
         // add common names
         this.appendToDbObject(dbObject, ProjectCollectionEnum.COMMON_NAME.name(), project.getCommonNames());

@@ -19,7 +19,6 @@ import thoughtwok.projectdb.entity.Tag;
 import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -55,7 +54,7 @@ public class ProjectDaoTest {
     }
 
     @Test
-    public void shouldNotCreateProjectWhenIdIsNull() {
+    public void shouldNotCreateProjectWhenCommonNameIsNull() {
         List<Tag> tags = new ArrayList<>();
         tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "jenkins"));
         tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "sonar"));
@@ -68,7 +67,8 @@ public class ProjectDaoTest {
             projectDao.createProject(aProjectWithNullId);
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
-            // all good then
+            // all good
+            assertEquals(ProjectDao.ERROR_COMMONNAME, iae.getMessage());
         }
 
         verify(dbCollection, never()).insert(any(DBObject.class));
@@ -88,6 +88,8 @@ public class ProjectDaoTest {
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
             // all good then
+            assertEquals(ProjectDao.ERROR_TAGS, iae.getMessage());
+
         }
 
         verify(dbCollection, never()).insert(any(DBObject.class));
@@ -97,14 +99,34 @@ public class ProjectDaoTest {
     @Test
     public void shouldNotCreateProjectWithNullIdOrEmptyTags() {
         Project aProjectWithNoTagsAndId = new Project();
-
         try {
             projectDao.createProject(aProjectWithNoTagsAndId);
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
             // all good then
+            assertEquals(ProjectDao.ERROR_COMMONNAME, iae.getMessage());
         }
 
+        verify(dbCollection, never()).insert(any(DBObject.class));
+        verify(dbCollection, never()).update(any(DBObject.class), any(DBObject.class));
+    }
+
+    @Test
+    public void shouldNotCreateProjectWithLatestFlagSetToFalse() {
+        Project aProject = new Project();
+        aProject.setCommonNames(Arrays.asList(new String[] {"A PROJECT WITH NO TAGS"}));
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "jenkins"));
+        tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "sonar"));
+        aProject.setTags(tags);
+        aProject.setLatest(false);
+
+        try {
+            projectDao.createProject(aProject);
+        } catch (IllegalArgumentException iae) {
+            assertEquals(ProjectDao.ERROR_LATEST, iae.getMessage());
+        }
+        
         verify(dbCollection, never()).insert(any(DBObject.class));
         verify(dbCollection, never()).update(any(DBObject.class), any(DBObject.class));
     }
@@ -117,6 +139,7 @@ public class ProjectDaoTest {
         tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "jenkins"));
         tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "sonar"));
         aProject.setTags(tags);
+        aProject.setLatest(true);
 
         try {
             projectDao.createProject(aProject);
@@ -137,7 +160,7 @@ public class ProjectDaoTest {
     }
 
     @Test
-    public void canNotFetchProjectWhenIdIsNUll() {
+    public void shouldNotFetchProjectWhenIdIsNUll() {
 
         Project queryProject = new Project();
         queryProject.setId(null);
@@ -154,7 +177,7 @@ public class ProjectDaoTest {
     }
 
     @Test
-    public void canFetchProjectWithAnId() {
+    public void shouldFetchProjectWithAnId() {
         Project queryProject = new Project();
         queryProject.setId("53fc8c118ff3ef2ae6d1d3b0");
 
@@ -183,7 +206,7 @@ public class ProjectDaoTest {
     }
 
     @Test
-    public void cantDeprecateProjectWithoutAnId() {
+    public void shouldNotDeprecateProjectWithoutAnId() {
         Project projectWithoutAnId = new Project();
         projectWithoutAnId.setId(null);
 
@@ -196,24 +219,24 @@ public class ProjectDaoTest {
 
 
     @Test
-    public void canDeprecateProjectWithAnId() {
+    public void shouldDeprecateProjectWithAnId() {
         Project projectWithoutAnId = new Project();
         projectWithoutAnId.setId("53fc8c118ff3ef2ae6d1d3b0");
-        
+
         DBObject invokeQuery = new BasicDBObject();
         ObjectId objectId = new ObjectId("53fc8c118ff3ef2ae6d1d3b0");
         invokeQuery.put("_id", objectId);
 
         DBObject update =
                 new BasicDBObject("$set", new BasicDBObject(ProjectCollectionEnum.LATEST.name(), Boolean.FALSE));
-        
+
         DBObject result = mock(DBObject.class);
 
         when(dbCollection.findAndModify(invokeQuery, null, null, false, update, true, false)).thenReturn(result);
         when(result.get("LATEST")).thenReturn(Boolean.FALSE);
-        
+
         projectDao.deprecateProjectById(projectWithoutAnId);
-        
+
         verify(dbCollection, only()).findAndModify(invokeQuery, null, null, false, update, true, false);
     }
 }
