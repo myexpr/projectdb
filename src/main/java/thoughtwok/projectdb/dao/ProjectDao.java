@@ -6,6 +6,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.AssertThrows;
 import org.springframework.util.Assert;
 
 import thoughtwok.projectdb.entity.CategoryEnum;
@@ -14,6 +15,7 @@ import thoughtwok.projectdb.entity.Tag;
 import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -22,6 +24,7 @@ import com.mongodb.QueryBuilder;
 @Repository
 public class ProjectDao {
 
+    public static final String ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH = "atleast one tag should have been specified";
     public static final String ERROR_COMMONNAME = "a project to be persisted should have atleast one common name";
     public  static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
     public  static final String ERROR_PERSISTED_ID = "after persisting project's id should never be null";
@@ -224,6 +227,25 @@ public class ProjectDao {
 
         return tags;
     }
-
+    
+    public List<Project> fetchProjectsByTags(String[] tags) {
+        Assert.isTrue(tags!=null && tags.length>0, ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH);
+        
+        DBObject query = new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
+        DBCollection collection = dbService.getCollection("projectdata");
+        DBCursor cursor = collection.find(query);
+        
+        //iterate, hydrate, add to list 
+        List<Project> projects = new ArrayList<>();
+        
+        while (cursor.hasNext()) {
+            DBObject root = cursor.next();
+            Project project = this.buildProjectFromDbObject(root);
+            projects.add(project);
+        }
+        
+        return projects;
+    }
+ 
 
 }

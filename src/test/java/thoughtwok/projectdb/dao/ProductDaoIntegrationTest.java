@@ -7,41 +7,28 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import thoughtwok.projectdb.entity.CategoryEnum;
+import thoughtwok.projectdb.entity.Project;
+import thoughtwok.projectdb.entity.Tag;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-import thoughtwok.projectdb.entity.CategoryEnum;
-import thoughtwok.projectdb.entity.Project;
-import thoughtwok.projectdb.entity.Tag;
-import thoughtwok.projectdb.service.DbService;
-
 import static junit.framework.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/spring-configuration.xml"})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ProductDaoIntegration {
+public class ProductDaoIntegrationTest extends BaseIntegrationTest {
 
     private static String persistedProjectId;
 
-    @Autowired
-    ProjectDao projectDao;
-
-    @Autowired
-    DbService dbService;
-
     @Test
-    public void persistAndRetrieveProject() {
+    public void shouldPersistAndRetrieveProject() {
 
         Project templateProject = this.getTemplateProject();
-        this.deleteAll();
+        this.deleteTestData();
         // get count and assert it is 0
         assertEquals(0L, dbService.getCollection("projectdata").count());
 
@@ -59,15 +46,12 @@ public class ProductDaoIntegration {
         assertEquals(1L, dbService.getCollection("projectdata").count());
 
         // finally set it for others to use
-        ProductDaoIntegration.persistedProjectId = createdProject.getId();
-
-    }
-
-    @Test
-    public void retrieveProject() {
-        Project templateProject = this.getTemplateProject();
+        ProductDaoIntegrationTest.persistedProjectId = createdProject.getId();
+        
+        templateProject = this.getTemplateProject();
+        
         Project query = new Project();
-        query.setId(ProductDaoIntegration.persistedProjectId);
+        query.setId(ProductDaoIntegrationTest.persistedProjectId);
 
         Project fetchedProject = projectDao.fetchProjectById(query);
         assertEquals(templateProject.getCommonNames(), fetchedProject.getCommonNames());
@@ -81,32 +65,36 @@ public class ProductDaoIntegration {
 
         // get count and assert it is 0
         assertEquals(1L, dbService.getCollection("projectdata").count());
+
     }
 
     @Test
     public void testActiveProjectCount() {
 
         Project templateProject = null;
-        this.deleteAll();
-        
+        this.deleteTestData();
+
         templateProject = this.getTemplateProject();
         templateProject.setClients(null);;
         projectDao.createProject(templateProject);
-        
+
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
         projectDao.createProject(templateProject);
-        
+
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
         templateProject.setSolutionDescription(null);
         projectDao.createProject(templateProject);
-        
-        //set the latest as false
-        templateProject = this.getTemplateProject();
-        templateProject.setLatest(Boolean.FALSE);
-        projectDao.createProject(templateProject);
-        
+
+        try {
+            templateProject = this.getTemplateProject();
+            templateProject.setLatest(Boolean.FALSE);
+            projectDao.createProject(templateProject);
+        } catch(IllegalArgumentException iae) {
+            assertEquals(ProjectDao.ERROR_LATEST, iae.getMessage());
+        }
+
         assertEquals(new Long(3), projectDao.countActiveProjects());
     }
 
@@ -130,33 +118,53 @@ public class ProductDaoIntegration {
         return project;
 
     }
-    
+
     @Test
     public void deprecateProject() {
-        
+
         Project templateProject = null;
-        this.deleteAll();
-        
+        this.deleteTestData();
+
         templateProject = this.getTemplateProject();
         templateProject.setClients(null);;
         projectDao.createProject(templateProject);
-        
+
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
         Project projectToBeDeprecated = projectDao.createProject(templateProject);
-        
+
         projectToBeDeprecated.setLatest(false);
         projectDao.deprecateProjectById(projectToBeDeprecated);
-        
-        DBCursor cursor = dbService.getCollection("projectdata").find( new BasicDBObject( "_id", new ObjectId(projectToBeDeprecated.getId())));
+
+        DBCursor cursor =
+                dbService.getCollection("projectdata").find(
+                        new BasicDBObject("_id", new ObjectId(projectToBeDeprecated.getId())));
         DBObject dbObject = cursor.next();
         assertEquals(Boolean.FALSE, dbObject.get("LATEST"));
-        
-        
+
+
     }
 
-    protected void deleteAll() {
-        dbService.getCollection("projectdata").drop();
+    @Test
+    public void shouldFetchProjectsByTag() {
+        this.deleteTestData();
+        this.insertTestData();
+        
+        String[] tags = new String[] {"Drools"};
+        List<Project> fetchProjectsByTags = this.projectDao.fetchProjectsByTags(tags);
+        assertEquals(1, fetchProjectsByTags.size());
     }
+    
+    @Test
+    public void shouldFetchProjectsByTags() {
+        this.deleteTestData();
+        this.insertTestData();
+        
+        String[] tags = new String[] {"putty", "quartz", "ehcache"};
+        List<Project> fetchProjectsByTags = this.projectDao.fetchProjectsByTags(tags);
+        assertEquals(3, fetchProjectsByTags.size());
+    }
+
+
 
 }

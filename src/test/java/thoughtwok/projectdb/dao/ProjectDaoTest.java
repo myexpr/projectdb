@@ -22,6 +22,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -126,7 +127,7 @@ public class ProjectDaoTest {
         } catch (IllegalArgumentException iae) {
             assertEquals(ProjectDao.ERROR_LATEST, iae.getMessage());
         }
-        
+
         verify(dbCollection, never()).insert(any(DBObject.class));
         verify(dbCollection, never()).update(any(DBObject.class), any(DBObject.class));
     }
@@ -238,5 +239,47 @@ public class ProjectDaoTest {
         projectDao.deprecateProjectById(projectWithoutAnId);
 
         verify(dbCollection, only()).findAndModify(invokeQuery, null, null, false, update, true, false);
+    }
+
+    @Test
+    public void shouldFailWhenTagListIsNull() {
+        try {
+            projectDao.fetchProjectsByTags(null);
+            fail("should have thrown an illegal argument exception");
+        } catch (IllegalArgumentException iae) {
+            assertEquals(ProjectDao.ERROR_SPECIFY_ATLEAST_ONE_TAG_FOR_SEARCH, iae.getMessage());
+        }
+        verify(dbCollection, never()).find();
+    }
+
+    @Test
+    public void shouldOnlySearchForLatestProjectsWithProvidedTag() {
+        String[] queryTag = new String[] {"foo"};
+        DBObject expectedQueryObject = (DBObject) JSON.parse("{ 'LATEST' : true , 'TAG_DATA.TAG' : { '$all' : ['foo'] } }");
+        ArgumentCaptor<DBObject> realQueryObject = ArgumentCaptor.forClass(DBObject.class);
+        when(dbService.getCollection("projectdata")).thenReturn(dbCollection);
+        when(dbCollection.find(any(DBObject.class))).thenReturn(dbCursor);
+        when(dbCursor.hasNext()).thenReturn(Boolean.FALSE);
+
+        projectDao.fetchProjectsByTags(queryTag);
+
+        verify(dbCollection, only()).find(realQueryObject.capture());
+        assertEquals(expectedQueryObject.toString(), realQueryObject.getValue().toString());
+    }
+    
+    @Test
+    public void shouldAppendAllProvidedTags() {
+        String[] queryTag = new String[] {"foo", "bar"};
+        DBObject expectedQueryObject = (DBObject) JSON.parse("{ 'LATEST' : true , 'TAG_DATA.TAG' : { '$all' : ['foo', 'bar'] } }");
+        ArgumentCaptor<DBObject> realQueryObject = ArgumentCaptor.forClass(DBObject.class);
+        when(dbService.getCollection("projectdata")).thenReturn(dbCollection);
+        when(dbCollection.find(any(DBObject.class))).thenReturn(dbCursor);
+        when(dbCursor.hasNext()).thenReturn(Boolean.FALSE);
+
+        projectDao.fetchProjectsByTags(queryTag);
+
+        verify(dbCollection, only()).find(realQueryObject.capture());
+        assertEquals(expectedQueryObject.toString(), realQueryObject.getValue().toString());
+        
     }
 }
