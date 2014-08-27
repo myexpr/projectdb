@@ -1,5 +1,7 @@
 package thoughtwok.projectdb.dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,29 +16,51 @@ import com.mongodb.DBObject;
 @Component
 public class TagDao {
     
+    private static Logger LOGGER = LoggerFactory.getLogger(TagDao.class);
+
+    private static final String ERROR_ONE_TAG_REQUIRED = "atleast one tag required";
     @Autowired
     DbService dbService;
 
     public TagStatistics getTagStatistics() {
-        DBCollection collection = this.dbService.getCollection("projectdata");
+        return this.getTagStatisticsFor(null);
+    }
+
+    public TagStatistics getTagStatisticsFor(String[] tags) {
 
         // aggregation pipeline
-        DBObject match = new BasicDBObject("$match", new BasicDBObject("LATEST", Boolean.TRUE));
+        DBObject tagSpecification, specificatioWithLatestClause = null;
+        DBObject match = new BasicDBObject();
+
+        if (tags != null && tags.length > 0) {
+            // { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['jmeter']} }
+            tagSpecification = new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
+            match.put("$match", tagSpecification);
+        } else {
+            match.put("$match", new BasicDBObject("LATEST", Boolean.TRUE));
+        }
+
+        // unwind
         DBObject unwind = new BasicDBObject("$unwind", "$TAG_DATA");
-        
+
+        // group specification
         DBObject groupFields = new BasicDBObject("_id", "$TAG_DATA.TAG");
         groupFields.put("tagCount", new BasicDBObject("$sum", new Integer(1)));
         DBObject group = new BasicDBObject("$group", groupFields);
-        
-        AggregationOutput aggregate = collection.aggregate(match, unwind, group);
 
-        // iterate over results and populate tag statistics
+        DBCollection dbCollection = dbService.getCollection("projectdata");
+        
+        LOGGER.info("all specifications MATCH:{} UNWIND:{} GROUP:{}", match, unwind, group);
+        
+        AggregationOutput aggregate = dbCollection.aggregate(match, unwind, group);
+
         TagStatistics tagStatistics = new TagStatistics();
         for (DBObject o : aggregate.results()) {
             tagStatistics.add((String) o.get("_id"), (Integer) o.get("tagCount"));
         }
 
         return tagStatistics;
+
     }
 
 }

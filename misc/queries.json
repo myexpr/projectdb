@@ -17,13 +17,34 @@ db.projectdata.aggregate([
     { $group  : { '_id' : null, tagCount : {$avg: {$sum:1}}}}
 ])
 
+db.projectdata.find( { 'TAG_DATA' : { 'CATEGORY' : { '$regex' : '.*'}, 'TAG' : 'solr'} }  )
+
+db.projectdata.find( { 'TAG_DATA.TAG' :  {$all : ['sonar', 'TDD', 'ehcache'] } } ) 
+db.projectdata.find( { 'TAG_DATA.TAG' :  {$all : ['sonar', 'TDD'] } } ) 
+
+db.projectdata.find( { 'LATEST' : true , 'TAG_DATA.TAG' : 'sonar' } ) 
+
+db.projectdata.find( { 'TAG_DATA.TAG' :  'WCS' } )
+
+
 db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : 'PRODUCT', 'TAG' : 'solr'} } } )
-db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : 'PRODUCT', 'TAG' : {$in: ['solr', 'endeca']} } } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : 'PRODUCT', 'TAG' : {$all: ['solr']} } } } )
 db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['solr', 'endeca']} } } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['solr', 'halo']} } } } )
+
+db.projectdata.find({ 'LATEST' : true, 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : 'sonar'} } } )
+
+db.projectdata.find({ 'LATEST' : true, 'TAG_DATA' : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$elemMatch: ['sonar', 'TDD']} } } )
+
+db.projectdata.find({ 'LATEST' : true, 'TAG_DATA' : {$in : [ { 'CATEGORY' : {$regex : '.*' }, 'TAG' : 'sonar' }, {'CATEGORY' : {$regex : '.*'}, 'TAG' : 'TDD'} ] } } )
 
 db.projectdata.aggregate([
-    { $match  : { 'LATEST' : true, 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['solr', 'endeca']} } } } },
+    { $match  : { 'LATEST' : true, 'TAG_DATA' : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : 'ibatis'} } },
+    { $unwind : '$TAG_DATA' }
+    ])
+db.projectdata.aggregate([
     { $unwind : '$TAG_DATA' },
+    { $match  : { 'LATEST' : true, 'TAG_DATA' : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : 'ibatis'} } },
     { $group  : { '_id' : '$TAG_DATA.TAG', 'tagCount' : {$sum:1} } },
     { $sort   : {'tagCount' : -1 } }
 ])
@@ -35,4 +56,15 @@ db.projectdata.aggregate([
     { $group  : { '_id' : '$TAG_DATA.TAG', 'tagCount' : {$sum:1} } },
     { $sort   : {'tagCount' : -1 } }
 ])
+
+
+
+{'TAG_DATA' : { $all: [ { "CATEGORY" : {$regex : '*.*'}, 'TAG' : 'solr'   }, { "CATEGORY" : {$regex : '*.*'}, 'TAG' : 'endeca' } ] } }
+
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['baremetal']} } } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['baremetal', 'solr']} } } } )
+db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['baremetal', 'solr', 'udeploy']} } } } )
+
+
+
 
