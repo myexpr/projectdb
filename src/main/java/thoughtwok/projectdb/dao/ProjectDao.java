@@ -6,6 +6,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import thoughtwok.projectdb.entity.CategoryEnum;
 import thoughtwok.projectdb.entity.Project;
@@ -21,6 +22,10 @@ import com.mongodb.QueryBuilder;
 @Repository
 public class ProjectDao {
 
+    private static final String ERROR_COMMONNAME = "a project to be persisted should have atleast one common name";
+    private static final String ERROR_TAGS = "a project to be persisted should have atleast one tag";
+    private static final String ERROR_PERSISTED_ID = "a persisted object's id should never be null";
+    
     @Autowired
     DbService dbService;
 
@@ -34,11 +39,14 @@ public class ProjectDao {
 
         BasicDBObject dbObject = new BasicDBObject();
 
+        //validate a few basic stuffs 
+        Assert.notNull(project.getCommonNames(), ERROR_COMMONNAME); Assert.notEmpty(project.getCommonNames(), ERROR_COMMONNAME);
+        Assert.notNull(project.getTags(), ERROR_TAGS); Assert.notEmpty(project.getTags(), ERROR_TAGS);
+        
         // add common names
         this.appendToDbObject(dbObject, ProjectCollectionEnum.COMMON_NAME.name(), project.getCommonNames());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.LATEST.name(), project.isLatest());
-        this.appendToDbObject(dbObject, ProjectCollectionEnum.SOLUTION_DESCRIPTION.name(),
-                project.getSolutionDescription());
+        this.appendToDbObject(dbObject, ProjectCollectionEnum.SOLUTION_DESCRIPTION.name(), project.getSolutionDescription());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.PIDS.name(), project.getPids());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.CLIENTS.name(), project.getClients());
         this.appendToDbObject(dbObject, ProjectCollectionEnum.INDUSTRIES.name(), project.getIndustries());
@@ -60,6 +68,7 @@ public class ProjectDao {
         collection.insert(dbObject);
 
         ObjectId id = (ObjectId) dbObject.get(ProjectCollectionEnum._ID.name().toLowerCase());
+        Assert.notNull(id, ERROR_PERSISTED_ID); 
 
         project.setId(id.toString());
 
@@ -68,13 +77,10 @@ public class ProjectDao {
 
     public Project deprecateProjectById(Project queryProject) {
         ObjectId id = null;
-        Project result = null;
         DBObject update =
                 new BasicDBObject("$set", new BasicDBObject(ProjectCollectionEnum.LATEST.name(), Boolean.FALSE));
 
-        if (queryProject.getId() == null) {
-            return result;
-        }
+        Assert.notNull(queryProject.getId(), "id cant be null while fetching a project");
 
         id = new ObjectId(queryProject.getId());
 
@@ -100,10 +106,9 @@ public class ProjectDao {
         ObjectId id = null;
         Project result = null;
 
-        if (queryProject.getId() == null) {
-            return result;
-        }
-
+        //validate inputs
+        Assert.notNull(queryProject.getId(), "id cant be null while fetching a project");
+        
         id = new ObjectId(queryProject.getId());
 
         DBObject query = QueryBuilder.start(ProjectCollectionEnum._ID.name().toLowerCase()).is(id).get();
