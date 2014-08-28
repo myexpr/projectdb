@@ -45,7 +45,7 @@ public class TagSearchRoute extends FreemarkerBasedRoute {
         
         //find tag statistics as well
         tagStatistics = this.tagDao.getTagStatisticsFor(tags);
-        root.put("tagstatistics", tagStatistics);
+        root.put("tagFrequency", tagStatistics.getTagFrequency().entrySet());
         root.put("querytag", tag);
         
         searchResults = projectDao.fetchProjectsByTags(tags);
