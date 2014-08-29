@@ -38,9 +38,9 @@ http://openshift.github.io/documentation/oo_cartridge_guide.html#tomcat
         
 * Start the application by typing
         cd $CODE
-        $MAVEN/bin/mvn compile exec:java -Dexec.mainClass=thoughtwok.projectdb.web.MainController
+        $MAVEN/bin/mvn clean compile package jetty:start
 
-* Navigate to http://localhost:4567/
+* Navigate to http://localhost:8080/
 
 # Optional Steps for Working with Eclipe
 * import workspace into eclipse. you may need to define M2_REPO environment variable for the build paths to work correctly
