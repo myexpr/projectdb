@@ -2,13 +2,10 @@
 <html>
   <head>
     <title>ProuctDB Home</title>
-    <link rel="stylesheet" type="text/css" href="/jqcloud.css" />
-    <script type="text/javascript" src="/jquery.min.js"></script>
-    <script type="text/javascript" src="/jqcloud-1.0.4.js"></script>
-	<link rel="stylesheet" type="text/css" href="/styles.css">
+    <#include "pdb_common_styles.ftl"/>
     <script type="text/javascript">
         var word_list = new Array(
-        <#list tagFrequency as tag>
+        <#list model["tagFrequency"] as tag>
             {text: "${tag["key"]}", weight: ${tag["value"]}, link: "/search?tag=${tag["key"]?html}"},
         </#list>
         { text:"", weight:0});
@@ -32,18 +29,8 @@
     </style>
 </head>
 <body>
-<div id="header" class="clearfix">
-	<div class="menu">
-		<a href="/">Project Home</a> <a href="/create">Create a Project</a>
-	</div>
-	<div class="user-options">
-		<#if username??>
-			Welcome ${username} <a href="/logout">Logout</a> | <a href="/">Blog Home</a>
-		</#if>
-	</div>
-</div>
-
-<h2>Tracking ${activeProjectCount} Projects</h2>
+<#include "pdb_common_header.ftl"/>
+<h2>Tracking ${model["activeProjectCount"]} Projects</h2>
 <div id="wordcloud"></div>
 </body>
 </html>
