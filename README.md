@@ -34,13 +34,13 @@ http://openshift.github.io/documentation/oo_cartridge_guide.html#tomcat
 
 * Run maven to download all dependencies. This may take a while 
         cd $CODE
-        $MAVEN/bin/mvn clean compile package
+        $MAVEN/bin/mvn clean compile package -Dspring.active.profile=test
         
 * Start the application by typing
         cd $CODE
-        $MAVEN/bin/mvn clean compile package jetty:start
+        $MAVEN/bin/mvn jetty:start -Dspring.active.profile=(dev|production)
 
-* Navigate to http://localhost:8080/
+* Navigate to http://localhost:8080/home
 
 # Optional Steps for Working with Eclipe
 * import workspace into eclipse. you may need to define M2_REPO environment variable for the build paths to work correctly

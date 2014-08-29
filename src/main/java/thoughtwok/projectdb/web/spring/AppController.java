@@ -48,10 +48,12 @@ public class AppController {
     @Autowired
     TagDao tagDao;
 
-    @RequestMapping(value = "home", method = RequestMethod.GET)
-    public String homePage(@ModelAttribute("model") ModelMap model) {
+    @RequestMapping(value = {"home","/"}, method = RequestMethod.GET)
+    public String homePage(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
         MetaStatistics statistics = this.statisticsService.getStatistics();
-
+        
+        String contextPath = request.getContextPath();
+        model.put("contextPath", contextPath);
         model.put("activeProjectCount", statistics.getActiveProjectCount());
         model.put("tagFrequency", statistics.getTagStatistics().getTagFrequency().entrySet());
 
@@ -59,7 +61,9 @@ public class AppController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createProject(@ModelAttribute("model") ModelMap model) {
+    public String createProject(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        model.put("contextPath", contextPath);
         model.put("projectParams", new HashMap<String, String>());
         model.put("errors", new HashSet<String>());
         return "pdb_create_project";
@@ -67,11 +71,12 @@ public class AppController {
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public String saveProject(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
-
+        String contextPath = request.getContextPath();
         Project theProject = null;
         String commonName = null;
         Set<String> errors = new HashSet<>();
 
+        model.put("contextPath", contextPath);
         commonName = request.getParameter(ProjectCollectionEnum.COMMON_NAME.name());
 
         theProject = new Project();
@@ -126,11 +131,12 @@ public class AppController {
     }
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public String tagSearch(@ModelAttribute("model") ModelMap model, @RequestParam(value = "tag") String tag) {
-
+    public String tagSearch(@ModelAttribute("model") ModelMap model, @RequestParam(value = "tag") String tag, HttpServletRequest request) {
+        String contextPath = request.getContextPath();
         List<Project> searchResults = null;
         TagStatistics tagStatistics = null;
 
+        model.put("contextPath", contextPath);
         // check that a tag is present on the request
         Assert.hasText(tag);
 
@@ -150,9 +156,11 @@ public class AppController {
     }
 
     @RequestMapping(value = "project/{projectId}", method = RequestMethod.GET)
-    public String displayProject(@ModelAttribute("model") ModelMap model, @PathVariable(value="projectId") String projectId) {
+    public String displayProject(@ModelAttribute("model") ModelMap model, @PathVariable(value="projectId") String projectId, HttpServletRequest request) {
+        String contextPath = request.getContextPath();
         Project theProject = null;
 
+        model.put("contextPath", contextPath);
         theProject = new Project();
         theProject.setId(projectId);
         theProject = projectDao.fetchProjectById(theProject);
