@@ -7,82 +7,129 @@
 </head>
 <body>
 <#include "pdb_common_header.ftl"/>
-<form action="save" method="POST">
-	<div class="error clearfix">
-		<#list model.errors as error>
-		${error}</br>
-		</#list>
-	</div>
-	<div id="form-elements">
-		<h2>Common Names (*)</h2>
-		<input type="text" name="COMMON_NAME" size="120" value="${model.projectParams["COMMON_NAME"]!""}"><br>
+<div class="w1000">
+	<form action="/save" method="POST">
+		<div class="error clearfix">
+			<#list errors as error>
+			${error}</br>
+			</#list>
+		</div>
+		<div id="form-elements">
+			<div class="form-row">
+				<label>Common Names (*)</label>
+				<input type="text" name="COMMON_NAME" value="${projectParams["COMMON_NAME"]!""}">
+			</div>
 
-		<h2>Solution Description</h2>
-		<input type="text" name="SOLUTION_DESCRIPTION" size="120" value="${model.projectParams["SOLUTION_DESCRIPTION"]!""}"><br>
+			<div class="form-row">
+				<label>Solution Description</label>
+				<input type="text" name="SOLUTION_DESCRIPTION" value="${projectParams["SOLUTION_DESCRIPTION"]!""}">
+			</div>
 
-		<h2>PIDs</h2>
-		<input type="text" name="PIDS" size="120" value="${model.projectParams["PIDS"]!""}"><br>
+			<div class="form-row">
+				<label>PIDs</label>
+				<input type="text" name="PIDS" value="${projectParams["PIDS"]!""}">
+			</div>
 
-		<h2>Clients</h2>
-		<input type="text" name="CLIENTS" size="120" value="${model.projectParams["CLIENTS"]!""}"><br>
+			<div class="form-row">
+				<label>Clients</label>
+				<input type="text" name="CLIENTS" value="${projectParams["CLIENTS"]!""}">
+			</div>
 
-		<h2>Industries</h2>
-		<input type="text" name="INDUSTRIES" size="120" value="${model.projectParams["INDUSTRIES"]!""}"><br>
+			<div class="form-row">
+				<label>Industries</label>
+				<input type="text" name="INDUSTRIES" value="${projectParams["INDUSTRIES"]!""}">
+			</div>
 
-		<h2>Markets</h2>
-		<input type="text" name="MARKETS" size="120" value="${model.projectParams["MARKETS"]!""}"><br>
+			<div class="form-row">
+				<label>Markets</label>
+				<input type="text" name="MARKETS" value="${projectParams["MARKETS"]!""}">
+			</div>
 
-		<h2>Methodology (comma seperated multiple values allowed)</h2>
-		<textarea name="METHODOLOGY" cols="120" rows="5">${model.projectParams["METHODOLOGY"]!""}</textarea><br>
+			<div class="form-row">
+				<label>Methodology (comma seperated multiple values allowed)</label>
+				<textarea name="METHODOLOGY" >${projectParams["METHODOLOGY"]!""}</textarea>
+			</div>
 
-		<h2>Collboration (comma seperated multiple values allowed)</h2>
-		<textarea name="COLLABORATION" cols="120" rows="5">${model.projectParams["COLLABORATION"]!""}</textarea><br>
-		
-		<h2>Language (comma seperated multiple values allowed)</h2>
-		<textarea name="LANGUAGE" cols="120" rows="5">${model.projectParams["LANGUAGE"]!""}</textarea><br>
-		
-		<h2>IDE / Development Tools (comma seperated multiple values allowed)</h2>
-		<textarea name="IDE" cols="120" rows="5">${model.projectParams["IDE"]!""}</textarea><br>
-		
-		<h2>Web Application Servers (comma seperated multiple values allowed)</h2>
-		<textarea name="WEB_APPLICATION_SERVER" cols="120" rows="5">${model.projectParams["WEB_APPLICATION_SERVER"]!""}</textarea><br>
-		
-		<h2>Products (comma seperated multiple values allowed)</h2>
-		<textarea name="PRODUCT" cols="120" rows="5">${model.projectParams["PRODUCT"]!""}</textarea><br>
-		
-		<h2>Frameworks (comma seperated multiple values allowed)</h2>
-		<textarea name="FRAMEWORK" cols="120" rows="5">${model.projectParams["FRAMEWORK"]!""}</textarea><br>
-		
-		<h2>Persistent Storage (comma seperated multiple values allowed)</h2>
-		<textarea name="PERSISTENT_STORAGE" cols="120" rows="5">${model.projectParams["PERSISTENT_STORAGE"]!""}</textarea><br>
-		
-		<h2>Version Control (comma seperated multiple values allowed)</h2>
-		<textarea name="VERSION_CONTROL" cols="120" rows="5">${model.projectParams["VERSION_CONTROL"]!""}</textarea><br>
-		
-		<h2>Automated Testing Tools (comma seperated multiple values allowed)</h2>
-		<textarea name="AUTOMATED_TESTING" cols="120" rows="5">${model.projectParams["AUTOMATED_TESTING"]!""}</textarea><br>
-		
-		<h2>Desktop Tools (comma seperated multiple values allowed)</h2>
-		<textarea name="DESKTOP_TOOLS" cols="120" rows="5">${model.projectParams["DESKTOP_TOOLS"]!""}</textarea><br>
-		
-		<h2>Build Tools (comma seperated multiple values allowed)</h2>
-		<textarea name="BUILD_TOOLS" cols="120" rows="5">${model.projectParams["BUILD_TOOLS"]!""}</textarea><br>
-		
-		<h2>Hardware (comma seperated multiple values allowed)</h2>
-		<textarea name="HARDWARE" cols="120" rows="5">${model.projectParams["HARDWARE"]!""}</textarea><br>
-		
-		<h2>Monitoring (comma seperated multiple values allowed)</h2>
-		<textarea name="MONITORING" cols="120" rows="5">${model.projectParams["MONITORING"]!""}</textarea><br>
-		
-		<h2>Traffic Management (comma seperated multiple values allowed)</h2>
-		<textarea name="TRAFFIC_MANAGERS" cols="120" rows="5">${model.projectParams["TRAFFIC_MANAGERS"]!""}</textarea><br>
-		
-		<h2>Others (comma seperated multiple values allowed)</h2>
-		<textarea name="OTHERS" cols="120" rows="5">${model.projectParams["OTHERS"]!""}</textarea><br>
-		<p>
-		<input type="submit" value="Submit">
-	</div>
-</form>
+			<div class="form-row">
+				<label>Collboration (comma seperated multiple values allowed)</label>
+				<textarea name="COLLABORATION" >${projectParams["COLLABORATION"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Language (comma seperated multiple values allowed)</label>
+				<textarea name="LANGUAGE" >${projectParams["LANGUAGE"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>IDE / Development Tools (comma seperated multiple values allowed)</label>
+				<textarea name="IDE" >${projectParams["IDE"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Web Application Servers (comma seperated multiple values allowed)</label>
+				<textarea name="WEB_APPLICATION_SERVER" >${projectParams["WEB_APPLICATION_SERVER"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Products (comma seperated multiple values allowed)</label>
+				<textarea name="PRODUCT" >${projectParams["PRODUCT"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Frameworks (comma seperated multiple values allowed)</label>
+				<textarea name="FRAMEWORK" >${projectParams["FRAMEWORK"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Persistent Storage (comma seperated multiple values allowed)</label>
+				<textarea name="PERSISTENT_STORAGE" >${projectParams["PERSISTENT_STORAGE"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Version Control (comma seperated multiple values allowed)</label>
+				<textarea name="VERSION_CONTROL" >${projectParams["VERSION_CONTROL"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Automated Testing Tools (comma seperated multiple values allowed)</label>
+				<textarea name="AUTOMATED_TESTING" >${projectParams["AUTOMATED_TESTING"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Desktop Tools (comma seperated multiple values allowed)</label>
+				<textarea name="DESKTOP_TOOLS" >${projectParams["DESKTOP_TOOLS"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Build Tools (comma seperated multiple values allowed)</label>
+				<textarea name="BUILD_TOOLS" >${projectParams["BUILD_TOOLS"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Hardware (comma seperated multiple values allowed)</label>
+				<textarea name="HARDWARE" >${projectParams["HARDWARE"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Monitoring (comma seperated multiple values allowed)</label>
+				<textarea name="MONITORING" >${projectParams["MONITORING"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Traffic Management (comma seperated multiple values allowed)</label>
+				<textarea name="TRAFFIC_MANAGERS" >${projectParams["TRAFFIC_MANAGERS"]!""}</textarea>
+			</div>
+			
+			<div class="form-row">
+				<label>Others (comma seperated multiple values allowed)</label>
+				<textarea name="OTHERS" >${projectParams["OTHERS"]!""}</textarea>
+			</div>
+			<div class="form-row button">
+				<input type="submit" value="Submit">
+			</div>
+		</div>
+	</form>
+</div>
 </body>
 </html>
 
