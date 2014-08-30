@@ -9,7 +9,7 @@ import com.mongodb.DB;
 import com.mongodb.Mongo;
 
 @Configuration
-@Profile("production")
+@Profile("default")
 public class ProdConfiguration implements AppConfiguration {
 
     @Override
