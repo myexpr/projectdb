@@ -31,7 +31,7 @@
 <body>
 <#include "pdb_common_header.ftl"/>
 	<div class="w1000">
-		<h1>Tracking "<span class="red">${activeProjectCount}</span>" Projects</h1>
+		<h1>Tracking "<span class="red">${model.activeProjectCount}</span>" Projects</h1>
 		<div id="wordcloud"></div>
 	</div>
 </body>
