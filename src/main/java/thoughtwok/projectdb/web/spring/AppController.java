@@ -48,7 +48,7 @@ public class AppController {
     @Autowired
     TagDao tagDao;
 
-    @RequestMapping(value = {"home","/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"home","/", ""}, method = RequestMethod.GET)
     public String homePage(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
         MetaStatistics statistics = this.statisticsService.getStatistics();
         
