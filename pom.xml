@@ -131,6 +131,10 @@
                      <target>1.7</target>
                   </configuration>
                </plugin>
+               <plugin>
+                  <groupId>org.mortbay.jetty</groupId>
+                  <artifactId>jetty-maven-plugin</artifactId>
+               </plugin>
             </plugins>
          </build>
       </profile>
