@@ -67,4 +67,8 @@ db.projectdata.find( { 'TAG_DATA' : {$elemMatch : { 'CATEGORY' : {$regex : '.*' 
 
 
 
+OPENSHIFT COMMANDS FOR IMPORT and MONGO SHELL
+ /usr/bin/mongoimport --host $OPENSHIFT_MONGODB_DB_HOST --port $OPENSHIFT_MONGODB_DB_PORT -u $OPENSHIFT_MONGODB_DB_USERNAME -p $OPENSHIFT_MONGODB_DB_PASSWO RD -d $OPENSHIFT_APP_NAME -c projectdata < ./app-root/runtime/repo/misc/testdata.json
 
+ 
+/usr/bin/mongo --host $OPENSHIFT_MONGODB_DB_HOST --port $OPENSHIFT_MONGODB_DB_PORT -u $OPENSHIFT_MONGODB_DB_USERNAME -p $OPENSHIFT_MONGODB_DB_PASSWORD $OPENSHIFT_APP_NAME
