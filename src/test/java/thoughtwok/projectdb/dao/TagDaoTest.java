@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import thoughtwok.projectdb.entity.TagStatistics;
 import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.AggregationOutput;
@@ -80,7 +81,7 @@ public class TagDaoTest {
 
         List<DBObject> results = new ArrayList<>();
         DBObject tagFreq = null;
-        for (String s : new String[] {"foo", "bar"}) {
+        for (String s : new String[] {"foo", "bar", "alpha", "beta", "gamma"}) {
             tagFreq = new BasicDBObject("_id", "foo");
             tagFreq.put("tagCount", new Random().nextInt());
             results.add(tagFreq);
@@ -91,8 +92,7 @@ public class TagDaoTest {
         ArgumentCaptor<DBObject> group = ArgumentCaptor.forClass(DBObject.class);
 
         when(dbService.getCollection("projectdata")).thenReturn(dbCollection);
-        when(dbCollection.aggregate(any(DBObject.class), any(DBObject.class), any(DBObject.class))).thenReturn(
-                aggregationOutput);
+        when(dbCollection.aggregate(any(DBObject.class), any(DBObject.class), any(DBObject.class))).thenReturn(aggregationOutput);
         when(aggregationOutput.results()).thenReturn(results);
 
         tagDao.getTagStatisticsFor(input);
@@ -111,6 +111,31 @@ public class TagDaoTest {
         DBObject expectedUnwindSpec = new BasicDBObject("$unwind", "$TAG_DATA");
         assertEquals(expectedUnwindSpec, unwind.getValue());
 
+    }
+    
+    @Test
+    public void shouldNotContainStatsForQueryTags() {
+        String[] query = new String[] {"foo", "bar", "alpha", "beta", "gamma"};
+        TagStatistics output = null;
+        
+        List<DBObject> results = new ArrayList<>();
+        DBObject tagFreq = null;
+        for (String s : query) {
+            tagFreq = new BasicDBObject("_id", s);
+            tagFreq.put("tagCount", new Random().nextInt());
+            results.add(tagFreq);
+        }
+
+        when(dbService.getCollection("projectdata")).thenReturn(dbCollection);
+        when(dbCollection.aggregate(any(DBObject.class), any(DBObject.class), any(DBObject.class))).thenReturn(aggregationOutput);
+        when(aggregationOutput.results()).thenReturn(results);
+        
+        output = this.tagDao.getTagStatisticsFor(query);
+        
+        assertFalse(output.getTagFrequency().containsKey(query[0]));
+        assertFalse(output.getTagFrequency().containsKey(query[1]));
+        
+        
     }
 
 }

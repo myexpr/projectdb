@@ -15,7 +15,7 @@ import com.mongodb.DBObject;
 
 @Component
 public class TagDao {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(TagDao.class);
 
     private static final String ERROR_ONE_TAG_REQUIRED = "atleast one tag required";
@@ -34,7 +34,8 @@ public class TagDao {
 
         if (tags != null && tags.length > 0) {
             // { 'CATEGORY' : {$regex : '.*' }, 'TAG' : {$in: ['jmeter']} }
-            tagSpecification = new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
+            tagSpecification =
+                    new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
             match.put("$match", tagSpecification);
         } else {
             match.put("$match", new BasicDBObject("LATEST", Boolean.TRUE));
@@ -49,14 +50,21 @@ public class TagDao {
         DBObject group = new BasicDBObject("$group", groupFields);
 
         DBCollection dbCollection = dbService.getCollection("projectdata");
-        
+
         LOGGER.info("all specifications MATCH:{} UNWIND:{} GROUP:{}", match, unwind, group);
-        
+
         AggregationOutput aggregate = dbCollection.aggregate(match, unwind, group);
 
         TagStatistics tagStatistics = new TagStatistics();
         for (DBObject o : aggregate.results()) {
             tagStatistics.add((String) o.get("_id"), (Integer) o.get("tagCount"));
+        }
+
+        // before returning lets remove the query tags from the statistics
+        if (tags != null && tags.length > 0) {
+            for (String s : tags) {
+                tagStatistics.getTagFrequency().remove(s);
+            }
         }
 
         return tagStatistics;
