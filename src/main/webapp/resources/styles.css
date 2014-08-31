@@ -35,6 +35,8 @@ a {
 #header a {
 	margin: 10px;
 	display: inline-block;
+	font-size: 20px;
+	color: #fff;
 }
 #header .user-options {
 	margin: 10px 0;
@@ -106,6 +108,20 @@ input[type=submit] {
 }
 .form-row.button {
 	text-align: center;
+}
+.lt-col-2 .form-row {
+    width: 460px;
+    float: left;
+}
+.lt-col-2 label {
+    width: auto;
+    width: auto;
+    margin: 5px 0;
+    display: block;
+}
+.lt-col-2 .form-row textarea {
+	height: 50px;
+	width: 440px;
 }
 .search-results h2 {
 	text-align: center;
