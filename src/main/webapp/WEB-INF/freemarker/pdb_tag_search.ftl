@@ -18,14 +18,14 @@
 <#include "pdb_common_header.ftl"/>
 
 <div class="w1000">
-    <h1>Search results for tag "<span class="red">${querytag}</span>"</h1>
+    <h1>Search results for tag "<span class="red">${model.querytag}</span>"</h1>
     <div id="wordcloud"></div>
     <div class="search-results">
-        <#if projects?has_content>
-            <h2>Found "<span class="red">${projects?size}</span>" projects</h2>
+        <#if model.projects?has_content>
+            <h2>Found "<span class="red">${model.projects?size}</span>" projects</h2>
 
             <ul class="project-details">
-                <#list projects as project>
+                <#list model.projects as project>
                     <li>
                         <#if project.commonNames?has_content>
                             <h3>
@@ -38,7 +38,7 @@
                         <#if project.tags?has_content>
                             <div class="tags">
                                 <#list project.tags as tag>
-                                    <a href="/search?tag=${querytag?html},${tag.name?html}">${tag.name}</a>
+                                    <a href="/search?tag=${model.querytag?html},${tag.name?html}">${tag.name}</a>
                                 </#list>
                             </div>
                         </#if>
