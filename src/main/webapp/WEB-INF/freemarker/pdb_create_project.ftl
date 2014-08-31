@@ -10,7 +10,6 @@
 <div class="w1000">
 	<form action="/save" method="POST">
 		<div class="error clearfix">
-			<#list errors as error>
 			<#list model.errors as error>
 			${error}</br>
 			</#list>
