@@ -9,11 +9,13 @@
 <#include "pdb_common_header.ftl"/>
 <div class="w1000">
 	<form action="/save" method="POST">
+        <#if model.errors?has_content>
 		<div class="error clearfix">
 			<#list model.errors as error>
 			${error}</br>
 			</#list>
 		</div>
+        </#if>
 		<div id="form-elements">
 			<div class="form-row">
 				<label>Common Names (*)</label>
