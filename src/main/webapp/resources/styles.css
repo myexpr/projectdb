@@ -67,9 +67,6 @@ input, textarea {
 	border: 1px solid #aaa;
 	box-shadow: 0px 2px 5px #ccc inset;
 }
-#form-elements {
-	margin: 10px 0;
-}
 input[type=submit] {
 	background: #069910;
 	border: 1px solid #fff;
@@ -93,7 +90,7 @@ input[type=submit] {
 	border-bottom: 1px solid #e8e8e8;
 	width: 960px;
 }
-.form-row label, .form-row input[type=text], .form-row textarea {
+.form-row label, .form-row input[type=text], .form-row textarea, .form-row p {
 	display: table-cell;
 	vertical-align: top;
 	width: 720px;
