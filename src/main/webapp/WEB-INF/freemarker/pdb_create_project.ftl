@@ -17,6 +17,9 @@
 		</div>
         </#if>
 		<div id="form-elements">
+            <#if model.projectParams["_ID"]?has_content>
+                <input type="hidden" name="_ID" value="${model.projectParams["_ID"]}"/>
+            </#if>
 			<div class="form-row">
 				<label>Common Names (*)</label>
 				<input type="text" name="COMMON_NAME" value="${model.projectParams["COMMON_NAME"]!""}">

@@ -41,9 +41,10 @@ public class ProjectDao {
      * @param project
      * @return the persisted projected updated with the _id
      */
-    public Project createProject(Project project) {
+    public Project createOrUpdateProject(Project project) {
 
         BasicDBObject dbObject = new BasicDBObject();
+        ObjectId id = null;
 
         // validate a few basic stuffs
         Assert.notNull(project.getCommonNames(), ERROR_COMMONNAME);
@@ -75,9 +76,16 @@ public class ProjectDao {
         this.appendToDbObject(dbObject, ProjectCollectionEnum.TAG_DATA.name(), dbTags);
 
         DBCollection collection = this.dbService.getCollection("projectdata");
-        collection.insert(dbObject);
 
-        ObjectId id = (ObjectId) dbObject.get(ProjectCollectionEnum._ID.name().toLowerCase());
+        if (project.getId() != null && project.getId().length() > 0) {
+            id = new ObjectId(project.getId());
+            DBObject updateQuery = new BasicDBObject(ProjectCollectionEnum._ID.name().toLowerCase(), id);
+            collection.update(updateQuery, dbObject);
+        } else {
+            collection.insert(dbObject);
+            id = (ObjectId) dbObject.get(ProjectCollectionEnum._ID.name().toLowerCase());
+        }
+
         Assert.notNull(id, ERROR_PERSISTED_ID);
 
         project.setId(id.toString());
@@ -238,7 +246,7 @@ public class ProjectDao {
 
         DBObject query =
                 new BasicDBObject("LATEST", Boolean.TRUE).append("TAG_DATA.TAG", new BasicDBObject("$all", tags));
-        LOGGER.info("The project query object with tags is {}",query);
+        LOGGER.info("The project query object with tags is {}", query);
         DBCollection collection = dbService.getCollection("projectdata");
         DBCursor cursor = collection.find(query);
 

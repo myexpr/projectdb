@@ -32,7 +32,9 @@
                                 <#list project.commonNames as commonName>
                                 ${commonName} 
                                 </#list>
-                                <a class="more-details" href="/project/${project.id}">more details</a>
+                                <div class="more-details">
+                                    <a href="/project/${project.id}">View Details</a> -or- <a href="/edit/${project.id}">Edit</a>
+                                </div>
                             </h3>
                         </#if>
                         <#if project.tags?has_content>

@@ -26,12 +26,10 @@ import thoughtwok.projectdb.dao.ProjectCollectionEnum;
 import thoughtwok.projectdb.dao.ProjectDao;
 import thoughtwok.projectdb.dao.TagDao;
 import thoughtwok.projectdb.entity.CategoryEnum;
-import thoughtwok.projectdb.entity.MetaStatistics;
 import thoughtwok.projectdb.entity.Project;
 import thoughtwok.projectdb.entity.Tag;
 import thoughtwok.projectdb.entity.TagStatistics;
 import thoughtwok.projectdb.service.StatisticsService;
-import freemarker.template.SimpleHash;
 
 
 @Controller
@@ -47,18 +45,6 @@ public class AppController {
 
     @Autowired
     TagDao tagDao;
-
-    @RequestMapping(value = {"home","/"}, method = RequestMethod.GET)
-    public String homePage(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
-        MetaStatistics statistics = this.statisticsService.getStatistics();
-        
-        String contextPath = request.getContextPath();
-        model.put("contextPath", contextPath);
-        model.put("activeProjectCount", statistics.getActiveProjectCount());
-        model.put("tagFrequency", statistics.getTagStatistics().getTagFrequency().entrySet());
-
-        return "pdb_project_home";
-    }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createProject(@ModelAttribute("model") ModelMap model, HttpServletRequest request) {
@@ -80,6 +66,7 @@ public class AppController {
         commonName = request.getParameter(ProjectCollectionEnum.COMMON_NAME.name());
 
         theProject = new Project();
+        theProject.setId(request.getParameter(ProjectCollectionEnum._ID.name()));
         theProject.setCommonNames(asList(request, ProjectCollectionEnum.COMMON_NAME.name()));
         theProject.setLatest(true);
         theProject.setSolutionDescription(request.getParameter(ProjectCollectionEnum.SOLUTION_DESCRIPTION.name()));
@@ -122,7 +109,7 @@ public class AppController {
         }
 
         // invoke product service and create the product
-        theProject = projectDao.createProject(theProject);
+        theProject = projectDao.createOrUpdateProject(theProject);
         LOGGER.debug("persisted project with id {}", theProject.getId());
 
         // now display the product

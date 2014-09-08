@@ -20,6 +20,7 @@ import thoughtwok.projectdb.entity.Tag;
 import thoughtwok.projectdb.service.DbService;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -66,7 +67,7 @@ public class ProjectDaoTest {
         aProjectWithNullId.setTags(tags);
 
         try {
-            projectDao.createProject(aProjectWithNullId);
+            projectDao.createOrUpdateProject(aProjectWithNullId);
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
             // all good
@@ -86,7 +87,7 @@ public class ProjectDaoTest {
         aProjectWithNoTags.setTags(null);
 
         try {
-            projectDao.createProject(aProjectWithNoTags);
+            projectDao.createOrUpdateProject(aProjectWithNoTags);
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
             // all good then
@@ -102,7 +103,7 @@ public class ProjectDaoTest {
     public void shouldNotCreateProjectWithNullIdOrEmptyTags() {
         Project aProjectWithNoTagsAndId = new Project();
         try {
-            projectDao.createProject(aProjectWithNoTagsAndId);
+            projectDao.createOrUpdateProject(aProjectWithNoTagsAndId);
             fail("should have thrown an illegal argument exception");
         } catch (IllegalArgumentException iae) {
             // all good then
@@ -124,7 +125,7 @@ public class ProjectDaoTest {
         aProject.setLatest(false);
 
         try {
-            projectDao.createProject(aProject);
+            projectDao.createOrUpdateProject(aProject);
         } catch (IllegalArgumentException iae) {
             assertEquals(ProjectDao.ERROR_LATEST, iae.getMessage());
         }
@@ -144,7 +145,7 @@ public class ProjectDaoTest {
         aProject.setLatest(true);
 
         try {
-            projectDao.createProject(aProject);
+            projectDao.createOrUpdateProject(aProject);
         } catch (IllegalArgumentException iae) {
             // DIRTY HACK..
             // this will throw an assertion error but at this moment I dont have a way to correct it.
@@ -159,6 +160,40 @@ public class ProjectDaoTest {
         assertEquals(1, ((List<String>) paramDBObject.getValue().get("COMMON_NAME")).size());
         assertEquals(2, ((List<DBObject>) paramDBObject.getValue().get("TAG_DATA")).size());
 
+    }
+    
+    @Test
+    public void shouldUpdateProjectWhenIdIsSet() {
+        String projectId = "5400b710db050881a76be5c5";
+        Project aProject = new Project();
+        aProject.setCommonNames(Arrays.asList(new String[] {"A PROJECT WITH NO TAGS"}));
+        List<Tag> tags = new ArrayList<>();
+        tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "jenkins"));
+        tags.add(new Tag(CategoryEnum.BUILD_TOOLS, "sonar"));
+        aProject.setTags(tags);
+        aProject.setLatest(true);
+        aProject.setId(projectId);
+
+        try {
+            projectDao.createOrUpdateProject(aProject);
+        } catch (IllegalArgumentException iae) {
+            // DIRTY HACK..
+            // this will throw an assertion error but at this moment I dont have a way to correct it.
+            // dbCollection.insert affects the argument DBObject and the id is retrieved from that object. I dont have a
+            // way to return a dummy id
+        }
+
+        ArgumentCaptor<DBObject> paramDBObject = ArgumentCaptor.forClass(DBObject.class);
+        ArgumentCaptor<DBObject> queryObject = ArgumentCaptor.forClass(DBObject.class);
+
+        verify(dbCollection, never()).insert(any(DBObject.class));
+
+        verify(dbCollection, times(1)).update(queryObject.capture(), paramDBObject.capture());
+        assertEquals(new ObjectId(projectId), queryObject.getValue().get("_id"));
+        // now assert a few values
+        assertEquals(1, ((List<String>) paramDBObject.getValue().get("COMMON_NAME")).size());
+        assertEquals(2, ((List<DBObject>) paramDBObject.getValue().get("TAG_DATA")).size());
+        
     }
 
     @Test

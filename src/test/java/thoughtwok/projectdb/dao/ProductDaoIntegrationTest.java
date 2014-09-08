@@ -32,7 +32,7 @@ public class ProductDaoIntegrationTest extends BaseIntegrationTest {
         // get count and assert it is 0
         assertEquals(0L, dbService.getCollection("projectdata").count());
 
-        Project createdProject = projectDao.createProject(templateProject);
+        Project createdProject = projectDao.createOrUpdateProject(templateProject);
 
         assertNotNull(createdProject.getId());
         assertEquals(templateProject.getCommonNames(), createdProject.getCommonNames());
@@ -76,21 +76,21 @@ public class ProductDaoIntegrationTest extends BaseIntegrationTest {
 
         templateProject = this.getTemplateProject();
         templateProject.setClients(null);;
-        projectDao.createProject(templateProject);
+        projectDao.createOrUpdateProject(templateProject);
 
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
-        projectDao.createProject(templateProject);
+        projectDao.createOrUpdateProject(templateProject);
 
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
         templateProject.setSolutionDescription(null);
-        projectDao.createProject(templateProject);
+        projectDao.createOrUpdateProject(templateProject);
 
         try {
             templateProject = this.getTemplateProject();
             templateProject.setLatest(Boolean.FALSE);
-            projectDao.createProject(templateProject);
+            projectDao.createOrUpdateProject(templateProject);
         } catch(IllegalArgumentException iae) {
             assertEquals(ProjectDao.ERROR_LATEST, iae.getMessage());
         }
@@ -127,11 +127,11 @@ public class ProductDaoIntegrationTest extends BaseIntegrationTest {
 
         templateProject = this.getTemplateProject();
         templateProject.setClients(null);;
-        projectDao.createProject(templateProject);
+        projectDao.createOrUpdateProject(templateProject);
 
         templateProject = this.getTemplateProject();
         templateProject.setMarkets(null);
-        Project projectToBeDeprecated = projectDao.createProject(templateProject);
+        Project projectToBeDeprecated = projectDao.createOrUpdateProject(templateProject);
 
         projectToBeDeprecated.setLatest(false);
         projectDao.deprecateProjectById(projectToBeDeprecated);
