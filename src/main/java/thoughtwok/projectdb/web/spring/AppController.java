@@ -66,10 +66,10 @@ public class AppController {
         commonName = request.getParameter(ProjectCollectionEnum.COMMON_NAME.name());
 
         theProject = new Project();
-        theProject.setId(request.getParameter(ProjectCollectionEnum._ID.name()));
+        theProject.setId(request.getParameter(ProjectCollectionEnum._ID.name()).trim());
         theProject.setCommonNames(asList(request, ProjectCollectionEnum.COMMON_NAME.name()));
         theProject.setLatest(true);
-        theProject.setSolutionDescription(request.getParameter(ProjectCollectionEnum.SOLUTION_DESCRIPTION.name()));
+        theProject.setSolutionDescription(request.getParameter(ProjectCollectionEnum.SOLUTION_DESCRIPTION.name()).trim());
         theProject.setPids(asList(request, ProjectCollectionEnum.PIDS.name()));
         theProject.setClients(asList(request, ProjectCollectionEnum.CLIENTS.name()));
         theProject.setIndustries(asList(request, ProjectCollectionEnum.INDUSTRIES.name()));
@@ -165,7 +165,11 @@ public class AppController {
         }
 
         String input = request.getParameter(paramName);
-        stringList = Arrays.asList(input.split(","));
+        String[] strings = input.split(",");
+        stringList = new ArrayList<>();
+        for (String s : strings ) {
+            stringList.add(s.trim());
+        }
 
         return stringList;
     }
@@ -181,7 +185,7 @@ public class AppController {
 
         tagList = new ArrayList<>();
         for (String s : stringInput) {
-            tagList.add(new Tag(CategoryEnum.valueOf(paramName), s));
+            tagList.add(new Tag(CategoryEnum.valueOf(paramName), s.trim()));
         }
 
         return tagList;
