@@ -3,7 +3,7 @@ sudo apt-get -y install openjdk-7-jdk
 which java
 java -version
 
-echo "Install Maven"
+echo "Installing Maven"
 INSTALL_DIR=/usr/bin/devtools;
 if [ ! -f /tmp/apache-maven-3.2.3-bin.tar.gz ]
 then
