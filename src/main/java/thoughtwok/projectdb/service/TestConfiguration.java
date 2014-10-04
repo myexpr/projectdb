@@ -16,8 +16,11 @@ public class TestConfiguration implements AppConfiguration {
     @Override
     public DB getMongoDB() {
         DB database = null;
+
         try {
-            database = new MongoClient(new MongoClientURI("mongodb://localhost/")).getDB("projrepo");
+            database =
+                    new MongoClient(new MongoClientURI("mongodb://d_mongo" //+ System.getenv("D_MONGO_PORT_27017_TCP_ADDR")
+                            + "/")).getDB("projrepo");
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

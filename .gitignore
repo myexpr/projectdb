@@ -41,4 +41,5 @@ www-test/
 .gwt-tmp/
 
 *.swp
+.vagrant
 target/*

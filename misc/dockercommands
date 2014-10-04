@@ -1,0 +1,9 @@
+#creating a new d_app instance
+docker run -it --name d_app -p 8080:8080 -v /vagrant/:/vagrant -v /M2/:/M2/ --link d_mongo:d_mongo jamesdbloom/docker-java7-maven:latest
+cd; 
+ln -s /M2/ .m2 
+
+docker start d_app;
+docker attach d_app;
+
+mvn -Dspring.profiles.active=test -Popenshift package

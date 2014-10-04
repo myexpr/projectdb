@@ -18,7 +18,7 @@ public class DevConfiguration implements AppConfiguration {
     public DB getMongoDB() {
         DB database = null;
         try {
-            database = new MongoClient(new MongoClientURI("mongodb://localhost/")).getDB("dev");
+            database = new MongoClient(new MongoClientURI("mongodb://d_mongo/")).getDB("dev");
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
